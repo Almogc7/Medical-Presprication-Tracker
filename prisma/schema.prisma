@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum PrescriptionStatus {
+  active
+  issued
+  expired
+}
+
+enum NotificationSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Person {
+  id            String         @id @default(cuid())
+  fullName      String
+  note          String?
+  prescriptions Prescription[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Prescription {
+  id               String             @id @default(cuid())
+  personId         String
+  person           Person             @relation(fields: [personId], references: [id], onDelete: Cascade)
+  title            String
+  pdfPath          String
+  originalFileName String
+  extractedText    String?
+  startDate        DateTime
+  expirationDate   DateTime
+  status           PrescriptionStatus @default(active)
+  issuedAt         DateTime?
+  notes            String?
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([personId])
+  @@index([status])
+  @@index([expirationDate])
+}
+
+model Notification {
+  id             String               @id @default(cuid())
+  prescriptionId String
+  prescription   Prescription         @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  type           String
+  title          String
+  message        String
+  severity       NotificationSeverity @default(low)
+  scheduledFor   DateTime
+  sentAt         DateTime?
+  isRead         Boolean              @default(false)
+  createdAt      DateTime             @default(now())
+
+  @@unique([prescriptionId, type])
+  @@index([isRead])
+}
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  prescriptionId String
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  action         String
+  details        String
+  createdAt      DateTime     @default(now())
+
+  @@index([prescriptionId])
+}
