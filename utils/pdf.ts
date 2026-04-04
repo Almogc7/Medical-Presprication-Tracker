@@ -1,5 +1,4 @@
 import { parse, isValid } from "date-fns";
-import { PDFParse } from "pdf-parse";
 
 const DATE_REGEX = /\b(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}|\d{4}[\/.-]\d{1,2}[\/.-]\d{1,2})\b/g;
 
@@ -120,12 +119,8 @@ export function detectMonthlyDateRangesFromText(text: string) {
 }
 
 export async function extractPdfText(buffer: Buffer) {
-  const parser = new PDFParse({ data: buffer });
-
-  try {
-    const result = await parser.getText();
-    return result.text?.trim() || "";
-  } finally {
-    await parser.destroy();
-  }
+  const pdfParseModule = await import("pdf-parse/lib/pdf-parse.js");
+  const pdfParse = pdfParseModule.default as (dataBuffer: Buffer) => Promise<{ text?: string }>;
+  const result = await pdfParse(buffer);
+  return result.text?.trim() || "";
 }
