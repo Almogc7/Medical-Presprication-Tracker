@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     const blob = await put(`prescriptions/${filename}`, buffer, {
-      access: "public",
+      access: "private",
       contentType: "application/pdf",
       addRandomSuffix: false,
     });
