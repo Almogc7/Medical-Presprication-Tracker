@@ -18,12 +18,11 @@ const FORMATS = [
   "MM/dd/yy",
 ];
 
-const HEBREW_DELIVERY_APPROVAL_CUE = "אישור המסירה בתוקף מ-";
+const HEBREW_DELIVERY_APPROVAL_CUE_REGEX = "אישור\\s+המסירה\\s+בתוקף\\s+מ\\s*[:\\-\\u05C3]?";
 
 function extractDateRangesByHebrewCue(text: string) {
-  const escapedCue = HEBREW_DELIVERY_APPROVAL_CUE.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const datePattern = "(\\d{1,2}[\\/.-]\\d{1,2}[\\/.-]\\d{2,4}|\\d{4}[\\/.-]\\d{1,2}[\\/.-]\\d{1,2})";
-  const pattern = new RegExp(`${escapedCue}\\s*${datePattern}[^\\d]{0,20}${datePattern}`, "g");
+  const pattern = new RegExp(`${HEBREW_DELIVERY_APPROVAL_CUE_REGEX}\\s*${datePattern}[^\\d]{0,20}${datePattern}`, "g");
 
   const ranges: { startDate: Date; expirationDate: Date }[] = [];
 
