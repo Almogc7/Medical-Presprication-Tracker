@@ -1,5 +1,6 @@
-import { EXPIRATION_THRESHOLDS } from "@/lib/constants";
+import { EXPIRATION_THRESHOLDS, WHATSAPP_ALERT_THRESHOLD_DAYS } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { sendWhatsAppMessage } from "@/lib/twilio";
 import type { NotificationSeverity } from "@/types/domain";
 import { daysUntilExpiration, isExpired, matchesThreshold } from "@/utils/date";
 
@@ -84,4 +85,48 @@ export async function generateNotificationsForThresholds() {
 
 export async function unreadNotificationCount() {
   return prisma.notification.count({ where: { isRead: false } });
+}
+
+export async function sendWhatsAppAlertsIfNeeded(): Promise<void> {
+  const configured =
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
+    process.env.TWILIO_WHATSAPP_FROM &&
+    process.env.TWILIO_WHATSAPP_TO;
+
+  if (!configured) {
+    return;
+  }
+
+  const notificationType = `expiring_${WHATSAPP_ALERT_THRESHOLD_DAYS}d`;
+
+  const pending = await prisma.notification.findMany({
+    where: {
+      type: notificationType,
+      whatsappSentAt: null,
+    },
+    include: {
+      prescription: {
+        include: { person: true },
+      },
+    },
+  });
+
+  for (const notification of pending) {
+    try {
+      const { title, person } = notification.prescription;
+      await sendWhatsAppMessage(
+        `Prescription Alert: "${title}" for ${person.fullName} expires in ${WHATSAPP_ALERT_THRESHOLD_DAYS} days. Please take action.`,
+      );
+      await prisma.notification.update({
+        where: { id: notification.id },
+        data: { whatsappSentAt: new Date() },
+      });
+    } catch (error) {
+      console.error(
+        `WhatsApp alert failed for notification ${notification.id}:`,
+        error,
+      );
+    }
+  }
 }

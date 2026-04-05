@@ -68,10 +68,11 @@ model Notification {
   title          String
   message        String
   severity       NotificationSeverity @default(low)
-  scheduledFor   DateTime
-  sentAt         DateTime?
-  isRead         Boolean              @default(false)
-  createdAt      DateTime             @default(now())
+  scheduledFor      DateTime
+  sentAt            DateTime?
+  whatsappSentAt    DateTime?
+  isRead            Boolean              @default(false)
+  createdAt         DateTime             @default(now())
 
   @@unique([prescriptionId, type])
   @@index([isRead])
