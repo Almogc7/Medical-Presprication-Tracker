@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { Navbar } from "@/components/layout/navbar";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -21,6 +21,7 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
@@ -34,7 +35,7 @@ export function AppShell({
     <LocaleProvider value={localeContext}>
       <div className="min-h-screen overflow-x-hidden bg-slate-100">
         <div className="md:flex md:min-h-screen">
-          <Sidebar mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+          <Sidebar mobileOpen={mobileMenuOpen} onClose={closeMobileMenu} />
           <div className="flex-1">
             <Navbar
               unreadNotifications={unreadNotifications}
