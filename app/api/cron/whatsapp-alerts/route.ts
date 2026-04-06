@@ -10,9 +10,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const url = new URL(request.url);
+  const thresholdParam = url.searchParams.get("whatsappThresholdDays");
+  const parsedThreshold = thresholdParam ? Number.parseInt(thresholdParam, 10) : undefined;
+
+  if (thresholdParam && (!Number.isFinite(parsedThreshold) || parsedThreshold <= 0)) {
+    return NextResponse.json({ error: "Invalid whatsappThresholdDays" }, { status: 400 });
+  }
+
   await syncPrescriptionStatuses();
   await generateNotificationsForThresholds();
-  await sendWhatsAppAlertsIfNeeded();
+  await sendWhatsAppAlertsIfNeeded({ thresholdDays: parsedThreshold });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, whatsappThresholdDays: parsedThreshold ?? null });
 }
