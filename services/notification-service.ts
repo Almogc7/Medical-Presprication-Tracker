@@ -102,36 +102,41 @@ export async function sendWhatsAppAlertsIfNeeded(options?: SendWhatsAppOptions):
     return;
   }
 
-  const thresholdDays = options?.thresholdDays ?? WHATSAPP_ALERT_THRESHOLD_DAYS;
-  const notificationType = `expiring_${thresholdDays}d`;
+  const thresholds = options?.thresholdDays != null
+    ? [options.thresholdDays]
+    : WHATSAPP_ALERT_THRESHOLD_DAYS;
 
-  const pending = await prisma.notification.findMany({
-    where: {
-      type: notificationType,
-      whatsappSentAt: null,
-    },
-    include: {
-      prescription: {
-        include: { person: true },
+  for (const thresholdDays of thresholds) {
+    const notificationType = `expiring_${thresholdDays}d`;
+
+    const pending = await prisma.notification.findMany({
+      where: {
+        type: notificationType,
+        whatsappSentAt: null,
       },
-    },
-  });
+      include: {
+        prescription: {
+          include: { person: true },
+        },
+      },
+    });
 
-  for (const notification of pending) {
-    try {
-      const { title, person } = notification.prescription;
-      await sendWhatsAppMessage(
-        `Prescription Alert: "${title}" for ${person.fullName} expires in ${thresholdDays} days. Please take action.`,
-      );
-      await prisma.notification.update({
-        where: { id: notification.id },
-        data: { whatsappSentAt: new Date() },
-      });
-    } catch (error) {
-      console.error(
-        `WhatsApp alert failed for notification ${notification.id}:`,
-        error,
-      );
+    for (const notification of pending) {
+      try {
+        const { title, person } = notification.prescription;
+        await sendWhatsAppMessage(
+          `Prescription Alert: "${title}" for ${person.fullName} expires in ${thresholdDays} days. Please take action.`,
+        );
+        await prisma.notification.update({
+          where: { id: notification.id },
+          data: { whatsappSentAt: new Date() },
+        });
+      } catch (error) {
+        console.error(
+          `WhatsApp alert failed for notification ${notification.id}:`,
+          error,
+        );
+      }
     }
   }
 }
