@@ -14,6 +14,10 @@
   --color-border:         oklch(88.5% 0.010 100);
   --color-border-subtle:  oklch(93%   0.007 100);
 
+  /* ─── Foreground scale ───────────────────────────────────────────────────── */
+  --color-foreground-muted:  oklch(44% 0.010 80);
+  --color-foreground-subtle: oklch(60% 0.008 80);
+
   /* ─── Sidebar — dark chrome ───────────────────────────────────────────────── */
   --color-sidebar:              oklch(17% 0.016 100);
   --color-sidebar-hover:        oklch(24% 0.016 100);
@@ -67,4 +71,14 @@ h1, h2, h3 { text-wrap: balance; }
   outline: 2px solid oklch(40% 0.13 155);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ─── Motion sensitivity ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

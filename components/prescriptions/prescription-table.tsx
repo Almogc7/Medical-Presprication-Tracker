@@ -109,7 +109,7 @@ export function PrescriptionTable({
   function renderPackBadge(row: Row) {
     const rem = row.totalPacks - row.usedPacks;
     return (
-      <span className="text-xs text-slate-500" aria-label={`${row.usedPacks} of ${row.totalPacks} packs used`}>
+      <span className="text-xs text-foreground-muted" aria-label={`${row.usedPacks ?? 0} of ${row.totalPacks ?? 0} packs used`}>
         {row.usedPacks}/{row.totalPacks}
         {rem > 0 && row.status !== "issued" ? ` · ${rem} left` : ""}
       </span>
@@ -123,8 +123,9 @@ export function PrescriptionTable({
         <Link
           href={resolvePdfHref(row.pdfPath)}
           target="_blank"
+          rel="noopener noreferrer"
           aria-label={`View PDF for ${row.title}`}
-          className="inline-flex h-9 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-slate-700 transition-colors hover:bg-border-subtle"
+          className="inline-flex h-11 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-foreground transition-colors hover:bg-border-subtle"
         >
           {t.common.viewPdf}
         </Link>
@@ -152,7 +153,7 @@ export function PrescriptionTable({
         <Link
           href={`/prescriptions/${row.id}`}
           aria-label={`View details for ${row.title}`}
-          className="inline-flex h-9 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-slate-700 transition-colors hover:bg-border-subtle"
+          className="inline-flex h-11 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-foreground transition-colors hover:bg-border-subtle"
         >
           {t.common.actions}
         </Link>
@@ -177,7 +178,7 @@ export function PrescriptionTable({
           <div key={row.id} className="rounded-[var(--radius-panel)] border border-border bg-surface p-4 shadow-sm">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-base font-medium text-slate-900">{row.title}</p>
+                <p className="text-base font-medium text-foreground">{row.title}</p>
                 <div className="mt-1">{renderPackBadge(row)}</div>
                 <div className="mt-2">
                   <StatusBadge status={row.status} expirationDate={new Date(row.expirationDateValue)} />
@@ -186,16 +187,16 @@ export function PrescriptionTable({
             </div>
             <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.prescriptions.table.startDate}</dt>
-                <dd className="mt-1 text-slate-700">{row.startDate}</dd>
+                <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.startDate}</dt>
+                <dd className="mt-1 text-foreground-muted">{row.startDate}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.prescriptions.table.expirationDate}</dt>
-                <dd className="mt-1 text-slate-700">{row.expirationDate}</dd>
+                <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.expirationDate}</dt>
+                <dd className="mt-1 text-foreground-muted">{row.expirationDate}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{t.prescriptions.table.daysRemaining}</dt>
-                <dd className="mt-1 text-slate-700">{row.daysRemaining}</dd>
+                <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.daysRemaining}</dt>
+                <dd className="mt-1 text-foreground-muted">{row.daysRemaining}</dd>
               </div>
             </dl>
             <div className="mt-4">{renderActions(row, true)}</div>
@@ -206,7 +207,7 @@ export function PrescriptionTable({
       {/* ── Desktop table ─────────────────────────────────────────────────── */}
       <div className="hidden overflow-x-auto rounded-[var(--radius-panel)] border border-border bg-surface shadow-sm md:block">
         <table className="min-w-full text-sm">
-          <thead className="bg-border-subtle text-left text-slate-600">
+          <thead className="bg-border-subtle text-left text-foreground-muted">
             <tr>
               <th className="px-4 py-3 font-medium">{t.prescriptions.table.title}</th>
               <th className="px-4 py-3 font-medium">{t.prescriptions.table.status}</th>
@@ -220,14 +221,14 @@ export function PrescriptionTable({
           <tbody className="divide-y divide-border-subtle">
             {rows.map((row) => (
               <tr key={row.id}>
-                <td className="px-4 py-3 font-medium text-slate-900">{row.title}</td>
+                <td className="px-4 py-3 font-medium text-foreground">{row.title}</td>
                 <td className="px-4 py-3">
                   <StatusBadge status={row.status} expirationDate={new Date(row.expirationDateValue)} />
                 </td>
-                <td className="px-4 py-3 tabular-nums text-slate-600">{renderPackBadge(row)}</td>
-                <td className="px-4 py-3 tabular-nums text-slate-600">{row.startDate}</td>
-                <td className="px-4 py-3 tabular-nums text-slate-600">{row.expirationDate}</td>
-                <td className="px-4 py-3 text-slate-600">{row.daysRemaining}</td>
+                <td className="px-4 py-3 tabular-nums text-foreground-muted">{renderPackBadge(row)}</td>
+                <td className="px-4 py-3 tabular-nums text-foreground-muted">{row.startDate}</td>
+                <td className="px-4 py-3 tabular-nums text-foreground-muted">{row.expirationDate}</td>
+                <td className="px-4 py-3 text-foreground-muted">{row.daysRemaining}</td>
                 <td className="px-4 py-3">{renderActions(row)}</td>
               </tr>
             ))}

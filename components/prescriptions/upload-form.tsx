@@ -43,6 +43,20 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
 
   const canParse = Boolean(file) && !parsing;
 
+  const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    if (f && f.size > MAX_FILE_SIZE) {
+      setMessage({ text: "File too large (max 20 MB)", type: "error" });
+      setFile(null);
+      e.target.value = "";
+      return;
+    }
+    setFile(f);
+    setMessage(null);
+  }
+
   async function parsePdf() {
     if (!file) return;
     setMessage(null);
@@ -152,7 +166,7 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
 
   return (
     <div className="space-y-5 rounded-[var(--radius-panel)] border border-border bg-surface p-5 shadow-sm">
-      <p className="text-sm text-slate-600">{t.prescriptions.uploadHelper}</p>
+      <p className="text-sm text-foreground-muted">{t.prescriptions.uploadHelper}</p>
 
       {/* ── Step 1: choose person + file ─────────────────────────────────── */}
       <div className="grid gap-4 md:grid-cols-2">
@@ -176,7 +190,7 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
           label="PDF"
           type="file"
           accept="application/pdf"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          onChange={handleFileChange}
         />
       </div>
 
@@ -193,7 +207,7 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
       {/* ── Step 2: review + save ────────────────────────────────────────── */}
       {parsed ? (
         <div className="space-y-4 rounded-[var(--radius-panel)] border border-accent-subtle bg-accent-subtle/40 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-subtle">
             Review detected dates
           </p>
 
@@ -243,13 +257,13 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
           ))}
 
           <div className="flex flex-col gap-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-slate-700">
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-foreground-muted">
               {t.common.notes}
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                className="w-full rounded-[var(--radius-component)] border border-border bg-surface px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+                className="w-full rounded-[var(--radius-component)] border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
               />
             </label>
           </div>
@@ -274,7 +288,7 @@ export function UploadForm({ people }: { people: PersonOption[] }) {
           className={
             message.type === "error"
               ? "text-sm text-status-danger"
-              : "text-sm text-slate-600"
+              : "text-sm text-foreground-muted"
           }
         >
           {message.text}

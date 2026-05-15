@@ -18,30 +18,49 @@ export default async function LoginPage({
   const adminEmail = process.env.ADMIN_EMAIL || "admin@prescription.local";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100 p-6" dir={dir}>
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">{t.auth.title}</h1>
-        <p className="mt-1 text-sm text-slate-500">{t.auth.subtitle}</p>
+    <div className="flex min-h-screen items-center justify-center bg-canvas p-6" dir={dir}>
+      <div className="w-full max-w-md rounded-[var(--radius-panel)] border border-border bg-surface p-6 shadow-sm">
+        <h1 className="text-2xl font-bold text-foreground">{t.auth.title}</h1>
+        <p className="mt-1 text-sm text-foreground-muted">{t.auth.subtitle}</p>
 
         <form action="/api/auth/login" method="post" className="mt-6 space-y-4">
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">{t.auth.email}</span>
+          <div className="flex flex-col gap-1 text-sm">
+            <label htmlFor="login-email" className="font-medium text-foreground-muted">
+              {t.auth.email}
+            </label>
             <input
+              id="login-email"
               type="email"
               name="email"
               required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              className="rounded-[var(--radius-component)] border border-border bg-canvas px-3 py-2 text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
               defaultValue={adminEmail}
             />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">{t.auth.password}</span>
-            <input type="password" name="password" required className="w-full rounded-lg border border-slate-300 px-3 py-2" />
-          </label>
+          </div>
 
-          {params.error ? <p className="text-sm text-rose-600">{t.auth.invalid}</p> : null}
+          <div className="flex flex-col gap-1 text-sm">
+            <label htmlFor="login-password" className="font-medium text-foreground-muted">
+              {t.auth.password}
+            </label>
+            <input
+              id="login-password"
+              type="password"
+              name="password"
+              required
+              className="rounded-[var(--radius-component)] border border-border bg-canvas px-3 py-2 text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+            />
+          </div>
 
-          <button type="submit" className="w-full rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white">
+          {params.error ? (
+            <p role="alert" className="text-sm text-status-danger">
+              {t.auth.invalid}
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            className="h-12 w-full rounded-[var(--radius-component)] bg-accent px-4 font-semibold text-accent-fg transition-colors hover:bg-accent-hover active:bg-accent-hover"
+          >
             {t.auth.login}
           </button>
         </form>

@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
     <select
       value={locale}
       onChange={(event) => onLocaleChange(event.target.value)}
-      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm text-slate-700"
+      className="rounded-[var(--radius-component)] border border-border bg-surface px-2 py-1 text-sm text-foreground transition-colors hover:bg-border-subtle"
       aria-label="Language"
     >
       <option value="en">English</option>

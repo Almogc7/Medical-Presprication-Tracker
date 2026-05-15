@@ -4,6 +4,7 @@ import { addPersonAction, removePersonAction } from "@/app/people/actions";
 import { SetPacksForPerson } from "@/components/people/set-packs-for-person";
 import { ProtectedPage } from "@/components/layout/protected-page";
 import { PersonCard } from "@/components/people/person-card";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { MAX_TRACKED_PEOPLE } from "@/lib/constants";
@@ -34,52 +35,60 @@ export default async function PeoplePage({
       <PageHeader title={t.people.title} />
 
       {params.success === "added" ? (
-        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{t.people.addSuccess}</div>
+        <div role="status" className="mb-4 rounded-[var(--radius-component)] border border-status-healthy/40 bg-status-healthy-bg px-4 py-3 text-sm text-status-healthy">
+          {t.people.addSuccess}
+        </div>
       ) : null}
 
       {params.success === "removed" ? (
-        <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{t.people.removeSuccess}</div>
+        <div role="status" className="mb-4 rounded-[var(--radius-component)] border border-status-healthy/40 bg-status-healthy-bg px-4 py-3 text-sm text-status-healthy">
+          {t.people.removeSuccess}
+        </div>
       ) : null}
 
       {params.error ? (
-        <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{decodeURIComponent(params.error)}</div>
+        <div role="alert" className="mb-4 rounded-[var(--radius-component)] border border-status-danger/40 bg-status-danger-bg px-4 py-3 text-sm text-status-danger">
+          {decodeURIComponent(params.error)}
+        </div>
       ) : null}
 
       <Card className="mb-5">
-        <h2 className="text-base font-semibold text-slate-900">{t.people.manageTitle}</h2>
-        <p className="mt-1 text-sm text-slate-500">{t.people.maxReached}</p>
+        <h2 className="text-base font-semibold text-foreground">{t.people.manageTitle}</h2>
+        <p className="mt-1 text-sm text-foreground-muted">{t.people.maxReached}</p>
 
         <form action={addPersonAction} className="mt-4 grid gap-3 md:grid-cols-3">
           <input
             name="fullName"
             placeholder={t.people.fullName}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            aria-label={t.people.fullName}
+            className="rounded-[var(--radius-component)] border border-border bg-canvas px-3 py-2 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50"
             required
             disabled={!canAdd}
           />
           <input
             name="note"
             placeholder={t.people.optionalNote}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            aria-label={t.people.optionalNote}
+            className="rounded-[var(--radius-component)] border border-border bg-canvas px-3 py-2 text-sm text-foreground placeholder:text-foreground-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent disabled:opacity-50"
             disabled={!canAdd}
           />
-          <button
-            type="submit"
-            disabled={!canAdd}
-            className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <Button type="submit" variant="primary" disabled={!canAdd}>
             {t.people.addPerson}
-          </button>
+          </Button>
         </form>
 
         <div className="mt-4 grid gap-2 md:grid-cols-2">
           {people.map((person) => (
-            <form key={person.id} action={removePersonAction} className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-2">
-              <span className="text-sm text-slate-700">{person.fullName}</span>
+            <form
+              key={person.id}
+              action={removePersonAction}
+              className="flex flex-col gap-2 rounded-[var(--radius-component)] border border-border bg-canvas px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:py-2"
+            >
+              <span className="text-sm text-foreground">{person.fullName}</span>
               <input type="hidden" name="personId" value={person.id} />
-              <button type="submit" className="w-full rounded-md border border-rose-300 px-2 py-2 text-xs font-medium text-rose-700 sm:w-auto sm:py-1">
+              <Button type="submit" variant="danger" size="sm" className="w-full sm:w-auto">
                 {t.people.removePerson}
-              </button>
+              </Button>
             </form>
           ))}
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useLocale } from "@/components/ui/locale-provider";
 
@@ -14,38 +14,77 @@ export function NotificationBell({
 }) {
   const [open, setOpen] = useState(false);
   const { t } = useLocale();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownId = "notification-dropdown";
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="relative whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+        aria-expanded={open}
+        aria-controls={dropdownId}
+        aria-haspopup="true"
+        aria-label={unread > 0 ? `${t.navbar.notifications} (${unread} unread)` : t.navbar.notifications}
+        className="relative whitespace-nowrap rounded-[var(--radius-component)] border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors hover:bg-border-subtle"
       >
         {t.navbar.notifications}
         {unread > 0 ? (
-          <span className="absolute -top-2 -right-2 min-w-5 rounded-full bg-rose-500 px-1 text-center text-xs font-semibold text-white">
+          <span
+            aria-hidden="true"
+            className="absolute -top-1.5 -right-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-status-danger px-1 text-center text-xs font-semibold text-accent-fg"
+          >
             {unread}
           </span>
         ) : null}
       </button>
 
       {open ? (
-        <div className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-3 shadow-lg">
-          <h3 className="mb-2 text-sm font-semibold text-slate-800">{t.notifications.title}</h3>
+        <div
+          id={dropdownId}
+          role="region"
+          aria-label={t.notifications.title}
+          aria-live="polite"
+          className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-[var(--radius-panel)] border border-border bg-surface p-3 shadow-lg"
+        >
+          <h3 className="mb-2 text-sm font-semibold text-foreground">{t.notifications.title}</h3>
           <div className="max-h-80 space-y-2 overflow-y-auto">
             {items.length ? (
               items.map((item) => (
-                <div key={item.id} className="rounded-lg border border-slate-100 bg-slate-50 p-2">
-                  <p className="text-sm font-medium text-slate-800">{item.title}</p>
-                  <p className="text-xs text-slate-600">{item.message}</p>
+                <div key={item.id} className="rounded-[var(--radius-component)] border border-border-subtle bg-canvas p-2">
+                  <p className="text-sm font-medium text-foreground">{item.title}</p>
+                  <p className="text-xs text-foreground-muted">{item.message}</p>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-slate-500">{t.notifications.noNotifications}</p>
+              <p className="text-sm text-foreground-subtle">{t.notifications.noNotifications}</p>
             )}
           </div>
-          <Link className="mt-3 inline-block text-xs font-semibold text-slate-700 underline" href="/notifications">
+          <Link
+            className="mt-3 inline-block text-xs font-semibold text-accent underline"
+            href="/notifications"
+            onClick={() => setOpen(false)}
+          >
             {t.sidebar.notifications}
           </Link>
         </div>

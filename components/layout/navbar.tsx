@@ -2,6 +2,7 @@
 
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/ui/locale-provider";
 
 export function Navbar({
@@ -24,7 +25,7 @@ export function Navbar({
       <button
         type="button"
         onClick={onMenuToggle}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-border-subtle md:hidden"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-component)] text-foreground-muted transition-colors hover:bg-border-subtle md:hidden"
         aria-expanded={mobileMenuOpen}
         aria-label={mobileMenuOpen ? t.navbar.closeMenu : t.navbar.menu}
       >
@@ -38,16 +39,13 @@ export function Navbar({
       <div className="flex flex-1 items-center justify-end gap-2">
         <LanguageSwitcher />
         <NotificationBell unread={unreadNotifications} items={notificationPreview} />
-        <span className="hidden text-xs text-slate-400 sm:block">
+        <span className="hidden text-xs text-foreground-subtle sm:block">
           {userEmail}
         </span>
         <form action="/api/auth/logout" method="post">
-          <button
-            type="submit"
-            className="rounded-lg border border-border px-3 py-1.5 text-xs text-slate-600 transition-colors hover:bg-border-subtle"
-          >
+          <Button type="submit" variant="secondary" size="sm">
             {t.navbar.logout}
-          </button>
+          </Button>
         </form>
       </div>
     </header>

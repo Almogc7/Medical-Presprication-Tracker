@@ -37,10 +37,10 @@ export function EditTotalPacks({
 
   if (!editing) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-700">
+      <div className="flex items-center gap-2 text-sm text-foreground-muted">
         <span>
-          Total Packs: <strong className="tabular-nums">{saved}</strong>
-          <span className="ml-1 text-slate-500">
+          Total Packs: <strong className="tabular-nums text-foreground">{saved}</strong>
+          <span className="ml-1 text-foreground-subtle">
             ({usedPacks} used, {saved - usedPacks} remaining)
           </span>
         </span>
@@ -68,7 +68,7 @@ export function EditTotalPacks({
         className="w-28"
         autoFocus
       />
-      <div className="flex items-end gap-2 pb-px" style={{ marginTop: "1.625rem" }}>
+      <div className="flex items-end gap-2 self-end pb-px">
         <Button variant="primary" size="sm" disabled={!valid} onClick={handleSave}>
           Save
         </Button>

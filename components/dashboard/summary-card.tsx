@@ -14,12 +14,12 @@ export function SummaryCard({
         ? "text-status-warning"
         : tone === "red"
           ? "text-status-danger"
-          : "text-slate-500";
+          : "text-foreground-subtle";
 
   return (
     <div className="flex flex-col gap-0.5 px-4 py-3 first:pl-0 last:pr-0">
       <span className={`text-2xl font-semibold tabular-nums ${valueClass}`}>{value}</span>
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-foreground-subtle">{label}</span>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export function FilterTabs({
                 "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                 active
                   ? "bg-accent text-accent-fg"
-                  : "text-slate-600 hover:bg-border-subtle",
+                  : "text-foreground-muted hover:bg-border-subtle",
               )}
             >
               {item.label}

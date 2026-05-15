@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/ui/locale-provider";
 
 type NotificationItem = {
@@ -32,23 +33,29 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
       {state.map((item) => (
         <div
           key={item.id}
-          className={`rounded-xl border p-4 shadow-sm ${item.isRead ? "border-slate-200 bg-white" : "border-amber-200 bg-amber-50"}`}
+          className={`rounded-[var(--radius-panel)] border p-4 shadow-sm ${
+            item.isRead
+              ? "border-border bg-surface"
+              : "border-status-warning/40 bg-status-warning-bg"
+          }`}
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-900">{item.title}</p>
-              <p className="mt-1 text-sm text-slate-600">{item.message}</p>
-              <p className="mt-2 text-xs text-slate-500">{item.createdAt}</p>
+              <p className="text-sm font-semibold text-foreground">{item.title}</p>
+              <p className="mt-1 text-sm text-foreground-muted">{item.message}</p>
+              <p className="mt-2 text-xs text-foreground-subtle">{item.createdAt}</p>
             </div>
-            {!item.isRead ? (
-              <button
-                type="button"
-                onClick={() => markAsRead(item.id)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-2 py-2 text-xs text-slate-700 sm:w-auto sm:py-1"
-              >
-                {t.notifications.markAsRead}
-              </button>
-            ) : null}
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              disabled={item.isRead}
+              onClick={() => markAsRead(item.id)}
+              aria-label={item.isRead ? "Already marked as read" : t.notifications.markAsRead}
+              className="w-full sm:w-auto"
+            >
+              {t.notifications.markAsRead}
+            </Button>
           </div>
         </div>
       ))}

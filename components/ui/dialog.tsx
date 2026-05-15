@@ -32,6 +32,14 @@ export function Dialog({
   const titleId  = useId();
   const descId   = useId();
 
+  // ── Body scroll lock ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
   // ── Focus trap + Escape ───────────────────────────────────────────────────
   useEffect(() => {
     if (!open) return;
@@ -46,9 +54,9 @@ export function Dialog({
         ),
       );
 
-    // Focus first element on open
+    // Focus first focusable, fallback to panel itself
     const focusables = getFocusables();
-    focusables[0]?.focus();
+    (focusables[0] ?? panel).focus();
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -83,7 +91,6 @@ export function Dialog({
   if (!open) return null;
 
   return (
-    // Backdrop container — not a dialog role itself
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
       {/* Backdrop */}
       <div
@@ -99,10 +106,12 @@ export function Dialog({
         aria-modal="true"
         aria-labelledby={title ? titleId : undefined}
         aria-describedby={description ? descId : undefined}
+        tabIndex={-1}
         className={cn(
           "relative w-full rounded-[var(--radius-panel)] border border-border bg-surface shadow-xl",
           "animate-in fade-in-0 slide-in-from-bottom-4 duration-200",
           "sm:slide-in-from-bottom-0 sm:zoom-in-95",
+          "focus:outline-none",
           maxWidthMap[maxWidth],
           className,
         )}
@@ -110,12 +119,12 @@ export function Dialog({
         {title || description ? (
           <div className="border-b border-border-subtle px-5 py-4">
             {title ? (
-              <h2 id={titleId} className="text-base font-semibold text-slate-900">
+              <h2 id={titleId} className="text-base font-semibold text-foreground">
                 {title}
               </h2>
             ) : null}
             {description ? (
-              <p id={descId} className="mt-1 text-sm text-slate-500">
+              <p id={descId} className="mt-1 text-sm text-foreground-muted">
                 {description}
               </p>
             ) : null}

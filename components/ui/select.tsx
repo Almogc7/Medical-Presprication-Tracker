@@ -21,7 +21,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label ? (
-          <label htmlFor={id} className="text-sm font-medium text-slate-700">
+          <label htmlFor={id} className="text-sm font-medium text-foreground-muted">
             {label}
             {required ? (
               <span className="ml-0.5 text-status-danger" aria-hidden="true">*</span>
@@ -36,13 +36,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           aria-invalid={error ? "true" : undefined}
           aria-describedby={describedBy}
           className={cn(
-            "w-full bg-surface px-3 py-2 text-sm text-slate-900",
+            "w-full bg-surface px-3 py-2 text-sm text-foreground",
             "rounded-[var(--radius-component)] border",
             "transition-colors duration-150",
             "focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent",
             error
               ? "border-status-danger"
-              : "border-border hover:border-slate-400",
+              : "border-border hover:border-foreground-subtle",
             "disabled:cursor-not-allowed disabled:bg-border-subtle disabled:opacity-60",
             className,
           )}
@@ -52,7 +52,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
 
         {hint && !error ? (
-          <p id={hintId} className="text-xs text-slate-500">{hint}</p>
+          <p id={hintId} className="text-xs text-foreground-muted">{hint}</p>
         ) : null}
 
         {error ? (

@@ -57,7 +57,7 @@ function UsePacksInline({ item }: { item: IssuableItem }) {
         className="w-16 rounded-[var(--radius-component)] border border-border bg-surface px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
         autoFocus
       />
-      <span className="text-xs text-slate-500" aria-hidden="true">/ {remaining}</span>
+      <span className="text-xs text-foreground-subtle" aria-hidden="true">/ {remaining}</span>
       <Button
         variant="primary"
         size="sm"
@@ -97,15 +97,15 @@ export function IssuableList({
     <div className="divide-y divide-border-subtle">
       {items.map((item) => (
         <div key={item.id} className="py-3 first:pt-0 last:pb-0">
-          <p className={`font-medium ${urgent ? "text-status-danger" : "text-slate-900"}`}>
+          <p className={`font-medium ${urgent ? "text-status-danger" : "text-foreground"}`}>
             {item.title}
           </p>
-          <p className={`mt-0.5 text-sm ${urgent ? "text-status-danger" : "text-slate-600"}`}>
+          <p className={`mt-0.5 text-sm ${urgent ? "text-status-danger" : "text-foreground-muted"}`}>
             {item.person}
           </p>
-          <p className="mt-0.5 text-xs tabular-nums text-slate-500">
+          <p className="mt-0.5 text-xs tabular-nums text-foreground-subtle">
             {item.daysRemaining}
-            <span aria-label={`${item.usedPacks} of ${item.totalPacks} packs used`}>
+            <span aria-label={`${item.usedPacks ?? 0} of ${item.totalPacks ?? 0} packs used`}>
               {" · "}{item.usedPacks}/{item.totalPacks} packs
             </span>
           </p>

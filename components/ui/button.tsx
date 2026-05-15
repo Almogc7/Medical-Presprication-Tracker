@@ -10,19 +10,19 @@ import { cn } from "@/utils/cn";
 // ghost     — no border:    low-emphasis actions inside cards/rows
 const variants = {
   primary:   "bg-accent text-accent-fg hover:bg-accent-hover active:bg-accent-hover",
-  secondary: "border border-border bg-surface text-slate-700 hover:bg-border-subtle active:bg-border",
-  danger:    "border border-rose-300 bg-transparent text-rose-700 hover:bg-rose-50 active:bg-rose-100",
-  ghost:     "bg-transparent text-slate-600 hover:bg-border-subtle active:bg-border",
+  secondary: "border border-border bg-surface text-foreground hover:bg-border-subtle active:bg-border",
+  danger:    "border border-status-danger/40 bg-transparent text-status-danger hover:bg-status-danger-bg active:bg-status-danger-bg",
+  ghost:     "bg-transparent text-foreground-muted hover:bg-border-subtle active:bg-border",
 } as const;
 
 // ─── Size → geometry ─────────────────────────────────────────────────────────
-// sm  36px — compact rows, badges, inline actions
-// md  40px — default form buttons
-// lg  44px — primary CTAs, mobile touch targets (WCAG 2.5.5)
+// sm  44px — compact rows, inline actions (WCAG 2.5.5 minimum)
+// md  48px — default form buttons
+// lg  48px — primary CTAs
 const sizes = {
-  sm: "h-9  px-3 text-xs  rounded-[var(--radius-component)]",
-  md: "h-10 px-4 text-sm  rounded-[var(--radius-component)]",
-  lg: "h-11 px-5 text-sm  rounded-[var(--radius-component)]",
+  sm: "h-11 px-3 text-xs  rounded-[var(--radius-component)]",
+  md: "h-12 px-4 text-sm  rounded-[var(--radius-component)]",
+  lg: "h-12 px-5 text-sm  rounded-[var(--radius-component)]",
 } as const;
 
 export type ButtonVariant = keyof typeof variants;

@@ -28,7 +28,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-5 xl:grid-cols-2">
         <Card>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">{t.dashboard.upcomingExpirations}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.upcomingExpirations}</h2>
           <div className="mt-3">
             {data.upcomingExpirations.length ? (
               <IssuableList items={data.upcomingExpirations} />
@@ -39,7 +39,7 @@ export default async function DashboardPage() {
         </Card>
 
         <Card>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">{t.dashboard.urgentAlerts}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.urgentAlerts}</h2>
           <div className="mt-3">
             {data.urgent.length ? (
               <IssuableList items={data.urgent} urgent />
@@ -52,17 +52,17 @@ export default async function DashboardPage() {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-2">
         <Card>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">{t.dashboard.perPerson}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.perPerson}</h2>
           <div className="mt-3 divide-y divide-border-subtle">
             {data.perPerson.map((person) => (
               <div key={person.id} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-900">{person.fullName}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="truncate text-sm font-medium text-foreground">{person.fullName}</p>
+                  <p className="mt-0.5 text-xs text-foreground-muted">
                     {t.people.activeCount}: {person.active} · {t.people.issuedCount}: {person.issued}
                   </p>
                 </div>
-                <p className="flex-shrink-0 text-xs tabular-nums text-slate-400">
+                <p className="flex-shrink-0 text-xs tabular-nums text-foreground-subtle">
                   {person.nearestExpiration ? format(person.nearestExpiration, "yyyy-MM-dd") : "—"}
                 </p>
               </div>
@@ -71,16 +71,16 @@ export default async function DashboardPage() {
         </Card>
 
         <Card>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">{t.dashboard.recentActivity}</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.recentActivity}</h2>
           <div className="mt-3 divide-y divide-border-subtle">
             {data.recentActivity.length ? (
               data.recentActivity.map((item) => (
                 <div key={item.id} className="py-3 first:pt-0 last:pb-0">
-                  <p className="text-sm font-medium text-slate-900">{item.prescriptionTitle}</p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="text-sm font-medium text-foreground">{item.prescriptionTitle}</p>
+                  <p className="mt-0.5 text-xs text-foreground-muted">
                     {item.person} · {item.action}
                   </p>
-                  <p className="mt-0.5 text-xs tabular-nums text-slate-400">
+                  <p className="mt-0.5 text-xs tabular-nums text-foreground-subtle">
                     {format(item.createdAt, "yyyy-MM-dd HH:mm")}
                   </p>
                 </div>

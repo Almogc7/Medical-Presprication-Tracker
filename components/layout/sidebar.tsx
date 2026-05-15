@@ -91,7 +91,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-3 py-1.5 text-xs text-sidebar-text hover:text-sidebar-text-active"
+            className="inline-flex h-11 items-center rounded-[var(--radius-component)] px-3 text-xs text-sidebar-text transition-colors hover:bg-sidebar-hover hover:text-sidebar-text-active"
             aria-label={t.navbar.closeMenu}
           >
             {t.common.cancel}
