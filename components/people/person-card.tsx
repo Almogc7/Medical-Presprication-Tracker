@@ -20,7 +20,7 @@ export function PersonCard({
   labels: { active: string; issued: string; nearest: string };
 }) {
   return (
-    <Link href={`/people/${id}`}>
+    <Link href={`/people/${id}`} className="block flex-1">
       <Card className="h-full transition hover:-translate-y-0.5 hover:shadow-md">
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-lg font-semibold text-slate-900">{name}</h3>

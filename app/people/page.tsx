@@ -94,7 +94,7 @@ export default async function PeoplePage({
             .sort((a, b) => a.expirationDate.getTime() - b.expirationDate.getTime())[0];
 
           return (
-            <div key={person.id}>
+            <div key={person.id} className="flex flex-col gap-2">
               <PersonCard
                 id={person.id}
                 name={person.fullName}
