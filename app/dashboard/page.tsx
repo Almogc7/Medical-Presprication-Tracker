@@ -18,18 +18,34 @@ export default async function DashboardPage() {
     <ProtectedPage>
       <PageHeader title={t.dashboard.title} />
 
-      {/* Compact stats strip — replaces 4 identical hero-metric cards */}
-      <div className="mb-5 flex divide-x divide-border overflow-x-auto rounded-xl border border-border bg-surface">
+      {/* Compact stats strip */}
+      <div className="mb-8 flex divide-x divide-border overflow-x-auto rounded-xl border border-border bg-surface">
         <SummaryCard label={t.dashboard.summary.active} value={data.summary.active} tone="green" />
         <SummaryCard label={t.dashboard.summary.expiringSoon} value={data.summary.expiringSoon} tone="amber" />
         <SummaryCard label={t.dashboard.summary.expired} value={data.summary.expired} tone="red" />
         <SummaryCard label={t.dashboard.summary.issued} value={data.summary.issued} tone="gray" />
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
+      {/* Primary alerts — urgent first, upcoming second */}
+      <div className="grid gap-6 xl:grid-cols-2">
+        <div className={
+          data.urgent.length > 0
+            ? "rounded-xl border border-status-danger/40 bg-status-danger-bg/30 p-4 shadow-sm"
+            : "rounded-xl border border-border bg-surface p-4 shadow-sm"
+        }>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.urgentAlerts}</h2>
+          <div className="mt-4">
+            {data.urgent.length ? (
+              <IssuableList items={data.urgent} urgent />
+            ) : (
+              <EmptyState title={t.common.empty} message={t.dashboard.urgentAlerts} />
+            )}
+          </div>
+        </div>
+
         <Card>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.upcomingExpirations}</h2>
-          <div className="mt-3">
+          <div className="mt-4">
             {data.upcomingExpirations.length ? (
               <IssuableList items={data.upcomingExpirations} />
             ) : (
@@ -37,28 +53,18 @@ export default async function DashboardPage() {
             )}
           </div>
         </Card>
-
-        <Card>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.urgentAlerts}</h2>
-          <div className="mt-3">
-            {data.urgent.length ? (
-              <IssuableList items={data.urgent} urgent />
-            ) : (
-              <EmptyState title={t.common.empty} message={t.dashboard.urgentAlerts} />
-            )}
-          </div>
-        </Card>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+      {/* Secondary info — per person and recent activity */}
+      <div className="mt-8 grid gap-6 xl:grid-cols-2">
         <Card>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.perPerson}</h2>
-          <div className="mt-3 divide-y divide-border-subtle">
+          <div className="mt-4 divide-y divide-border-subtle">
             {data.perPerson.map((person) => (
-              <div key={person.id} className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+              <div key={person.id} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{person.fullName}</p>
-                  <p className="mt-0.5 text-xs text-foreground-muted">
+                  <p className="mt-1 text-xs text-foreground-muted">
                     {t.people.activeCount}: {person.active} · {t.people.issuedCount}: {person.issued}
                   </p>
                 </div>
@@ -72,15 +78,15 @@ export default async function DashboardPage() {
 
         <Card>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-subtle">{t.dashboard.recentActivity}</h2>
-          <div className="mt-3 divide-y divide-border-subtle">
+          <div className="mt-4 divide-y divide-border-subtle">
             {data.recentActivity.length ? (
               data.recentActivity.map((item) => (
-                <div key={item.id} className="py-3 first:pt-0 last:pb-0">
+                <div key={item.id} className="py-4 first:pt-0 last:pb-0">
                   <p className="text-sm font-medium text-foreground">{item.prescriptionTitle}</p>
-                  <p className="mt-0.5 text-xs text-foreground-muted">
+                  <p className="mt-1 text-xs text-foreground-muted">
                     {item.person} · {item.action}
                   </p>
-                  <p className="mt-0.5 text-xs tabular-nums text-foreground-subtle">
+                  <p className="mt-1 text-xs tabular-nums text-foreground-subtle">
                     {format(item.createdAt, "yyyy-MM-dd HH:mm")}
                   </p>
                 </div>

@@ -100,7 +100,7 @@ export function PrescriptionTable({
   onDelete: (id: string) => Promise<void>;
 }) {
   const { t } = useLocale();
-  const [packTargetId,  setPackTargetId]  = useState<string | null>(null);
+  const [packTargetId,   setPackTargetId]   = useState<string | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const packTarget = rows.find((r) => r.id === packTargetId) ?? null;
@@ -119,17 +119,8 @@ export function PrescriptionTable({
   function renderActions(row: Row, stacked = false) {
     const rem = row.totalPacks - row.usedPacks;
     return (
-      <div className={stacked ? "grid gap-2 sm:flex sm:flex-wrap" : "flex flex-wrap gap-2"}>
-        <Link
-          href={resolvePdfHref(row.pdfPath)}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`View PDF for ${row.title}`}
-          className="inline-flex h-11 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-foreground transition-colors hover:bg-border-subtle"
-        >
-          {t.common.viewPdf}
-        </Link>
-
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Primary action first */}
         {row.status !== "issued" && rem > 0 ? (
           <Button
             variant="primary"
@@ -151,6 +142,16 @@ export function PrescriptionTable({
         ) : null}
 
         <Link
+          href={resolvePdfHref(row.pdfPath)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`View PDF for ${row.title}`}
+          className="inline-flex h-11 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-foreground transition-colors hover:bg-border-subtle"
+        >
+          {t.common.viewPdf}
+        </Link>
+
+        <Link
           href={`/prescriptions/${row.id}`}
           aria-label={`View details for ${row.title}`}
           className="inline-flex h-11 items-center rounded-[var(--radius-component)] border border-border px-3 text-xs text-foreground transition-colors hover:bg-border-subtle"
@@ -158,10 +159,12 @@ export function PrescriptionTable({
           {t.common.actions}
         </Link>
 
+        {/* Danger action: pushed right on mobile cards, inline on desktop table */}
         <Button
           variant="danger"
           size="sm"
           aria-label={`Delete ${row.title}`}
+          className={stacked ? "ml-auto" : undefined}
           onClick={() => setDeleteTargetId(row.id)}
         >
           {t.common.delete}
@@ -176,29 +179,35 @@ export function PrescriptionTable({
       <div className="space-y-3 md:hidden">
         {rows.map((row) => (
           <div key={row.id} className="rounded-[var(--radius-panel)] border border-border bg-surface p-4 shadow-sm">
+            {/* Header: title + status badge */}
             <div className="flex items-start justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <p className="text-base font-medium text-foreground">{row.title}</p>
                 <div className="mt-1">{renderPackBadge(row)}</div>
-                <div className="mt-2">
-                  <StatusBadge status={row.status} expirationDate={new Date(row.expirationDateValue)} />
-                </div>
+              </div>
+              <div className="shrink-0">
+                <StatusBadge status={row.status} expirationDate={new Date(row.expirationDateValue)} />
               </div>
             </div>
-            <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-              <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.startDate}</dt>
-                <dd className="mt-1 text-foreground-muted">{row.startDate}</dd>
-              </div>
-              <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.expirationDate}</dt>
-                <dd className="mt-1 text-foreground-muted">{row.expirationDate}</dd>
-              </div>
+
+            {/* Dates: days remaining prominent, start/expiry secondary */}
+            <dl className="mt-4 space-y-3">
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.daysRemaining}</dt>
-                <dd className="mt-1 text-foreground-muted">{row.daysRemaining}</dd>
+                <dd className="mt-1 text-sm font-medium text-foreground">{row.daysRemaining}</dd>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.startDate}</dt>
+                  <dd className="mt-1 text-sm text-foreground-muted">{row.startDate}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-foreground-subtle">{t.prescriptions.table.expirationDate}</dt>
+                  <dd className="mt-1 text-sm text-foreground-muted">{row.expirationDate}</dd>
+                </div>
               </div>
             </dl>
+
             <div className="mt-4">{renderActions(row, true)}</div>
           </div>
         ))}

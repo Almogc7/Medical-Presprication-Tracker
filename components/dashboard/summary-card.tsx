@@ -17,9 +17,9 @@ export function SummaryCard({
           : "text-foreground-subtle";
 
   return (
-    <div className="flex flex-col gap-0.5 px-4 py-3 first:pl-0 last:pr-0">
-      <span className={`text-2xl font-semibold tabular-nums ${valueClass}`}>{value}</span>
-      <span className="text-xs text-foreground-subtle">{label}</span>
-    </div>
+    <dl className="flex flex-col-reverse gap-0.5 px-5 py-4 first:pl-4 last:pr-4">
+      <dt className="text-xs text-foreground-subtle">{label}</dt>
+      <dd className={`text-2xl font-semibold tabular-nums ${valueClass}`}>{value}</dd>
+    </dl>
   );
 }
