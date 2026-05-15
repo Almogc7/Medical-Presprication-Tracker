@@ -87,6 +87,65 @@ export async function unreadNotificationCount() {
   return prisma.notification.count({ where: { isRead: false } });
 }
 
+export async function sendLicenseRenewalAlertsIfNeeded(): Promise<void> {
+  const configured = process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID;
+  if (!configured) return;
+
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+
+  // Find people who have exactly 1 active prescription and it starts today
+  const people = await prisma.person.findMany({
+    include: {
+      prescriptions: {
+        where: { status: "active" },
+      },
+    },
+  });
+
+  for (const person of people) {
+    if (person.prescriptions.length !== 1) continue;
+
+    const last = person.prescriptions[0];
+    const startsToday = last.startDate >= todayStart && last.startDate < todayEnd;
+    if (!startsToday) continue;
+
+    // Upsert the in-app notification
+    const notification = await prisma.notification.upsert({
+      where: {
+        prescriptionId_type: {
+          prescriptionId: last.id,
+          type: "license_renewal",
+        },
+      },
+      update: {},
+      create: {
+        prescriptionId: last.id,
+        type: "license_renewal",
+        title: "License renewal required",
+        message: `${person.fullName} has only 1 prescription left. Time to renew the medical license.`,
+        severity: "high",
+        scheduledFor: now,
+      },
+    });
+
+    if (notification.telegramSentAt) continue;
+
+    try {
+      await sendTelegramMessage(
+        `License Renewal Reminder: "${person.fullName}" is now on their last prescription ("${last.title}"). Please renew the medical license.`,
+      );
+      await prisma.notification.update({
+        where: { id: notification.id },
+        data: { telegramSentAt: now },
+      });
+    } catch (error) {
+      console.error(`License renewal alert failed for ${person.fullName}:`, error);
+    }
+  }
+}
+
 type SendTelegramOptions = {
   thresholdDays?: number;
 };

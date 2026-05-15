@@ -3,7 +3,7 @@ import { requireAuth } from "@/lib/auth";
 import { getDictionary } from "@/lib/i18n";
 import { prisma } from "@/lib/prisma";
 import { assertTrackedFamilyIntegrity } from "@/services/family-service";
-import { generateNotificationsForThresholds, sendTelegramAlertsIfNeeded } from "@/services/notification-service";
+import { generateNotificationsForThresholds, sendLicenseRenewalAlertsIfNeeded, sendTelegramAlertsIfNeeded } from "@/services/notification-service";
 import { syncPrescriptionStatuses } from "@/services/prescription-service";
 
 export async function ProtectedPage({ children }: { children: React.ReactNode }) {
@@ -14,6 +14,7 @@ export async function ProtectedPage({ children }: { children: React.ReactNode })
   await syncPrescriptionStatuses();
   await generateNotificationsForThresholds();
   await sendTelegramAlertsIfNeeded();
+  await sendLicenseRenewalAlertsIfNeeded();
 
   const notifications = await prisma.notification.findMany({
     where: { isRead: false },

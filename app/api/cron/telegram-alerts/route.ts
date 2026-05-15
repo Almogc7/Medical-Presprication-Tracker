@@ -1,4 +1,4 @@
-import { generateNotificationsForThresholds, sendTelegramAlertsIfNeeded } from "@/services/notification-service";
+import { generateNotificationsForThresholds, sendLicenseRenewalAlertsIfNeeded, sendTelegramAlertsIfNeeded } from "@/services/notification-service";
 import { syncPrescriptionStatuses } from "@/services/prescription-service";
 import { NextResponse } from "next/server";
 
@@ -25,6 +25,7 @@ export async function GET(request: Request) {
   await syncPrescriptionStatuses();
   await generateNotificationsForThresholds();
   await sendTelegramAlertsIfNeeded({ thresholdDays: parsedThreshold });
+  await sendLicenseRenewalAlertsIfNeeded();
 
   return NextResponse.json({ ok: true, telegramThresholdDays: parsedThreshold ?? null });
 }
