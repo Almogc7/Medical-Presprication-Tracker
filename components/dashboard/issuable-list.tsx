@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useId, useState, useTransition } from "react";
 import { useLocale } from "@/components/ui/locale-provider";
+import { Button } from "@/components/ui/button";
 import { usePacksAction } from "@/app/actions";
 
 type IssuableItem = {
@@ -15,42 +16,51 @@ type IssuableItem = {
 
 function UsePacksInline({ item }: { item: IssuableItem }) {
   const { t } = useLocale();
+  const inputId = useId();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("1");
   const [, startTransition] = useTransition();
 
   const remaining = item.totalPacks - item.usedPacks;
-  const parsed = parseInt(value, 10);
-  const valid = !isNaN(parsed) && parsed >= 1 && parsed <= remaining;
+  const parsed    = parseInt(value, 10);
+  const valid     = !isNaN(parsed) && parsed >= 1 && parsed <= remaining;
 
   if (remaining <= 0) return null;
 
   if (!open) {
     return (
-      <button
-        type="button"
+      <Button
+        variant="primary"
+        size="sm"
+        className="mt-2"
+        aria-label={`Use packs for ${item.title}`}
         onClick={() => setOpen(true)}
-        className="mt-2 rounded-lg bg-slate-900 px-3 py-1 text-xs font-semibold text-white"
       >
         {t.common.usePacks}
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div className="mt-2 flex items-center gap-2">
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      <label htmlFor={inputId} className="sr-only">
+        {t.prescriptions.usePacksDescription} (max {remaining})
+      </label>
       <input
+        id={inputId}
         type="number"
         min={1}
         max={remaining}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-xs"
+        aria-invalid={!valid && value !== "" ? "true" : undefined}
+        className="w-16 rounded-[var(--radius-component)] border border-border bg-surface px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
         autoFocus
       />
-      <span className="text-xs text-slate-500">/ {remaining}</span>
-      <button
-        type="button"
+      <span className="text-xs text-slate-500" aria-hidden="true">/ {remaining}</span>
+      <Button
+        variant="primary"
+        size="sm"
         disabled={!valid}
         onClick={() => {
           if (!valid) return;
@@ -60,17 +70,16 @@ function UsePacksInline({ item }: { item: IssuableItem }) {
           setOpen(false);
           setValue("1");
         }}
-        className="rounded-lg bg-slate-900 px-2 py-1 text-xs font-semibold text-white disabled:opacity-50"
       >
         {t.common.confirm}
-      </button>
-      <button
-        type="button"
+      </Button>
+      <Button
+        variant="secondary"
+        size="sm"
         onClick={() => { setOpen(false); setValue("1"); }}
-        className="rounded-lg border border-slate-300 px-2 py-1 text-xs text-slate-600"
       >
         {t.common.cancel}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -85,20 +94,20 @@ export function IssuableList({
   if (!items.length) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="divide-y divide-border-subtle">
       {items.map((item) => (
-        <div
-          key={item.id}
-          className={
-            urgent
-              ? "rounded-xl border border-rose-200 bg-rose-50 p-3"
-              : "rounded-xl border border-slate-200 p-3"
-          }
-        >
-          <p className={`font-medium ${urgent ? "text-rose-800" : "text-slate-900"}`}>{item.title}</p>
-          <p className={`text-sm ${urgent ? "text-rose-700" : "text-slate-600"}`}>{item.person}</p>
-          <p className={`text-xs ${urgent ? "text-rose-600" : "text-slate-500"}`}>
-            {item.daysRemaining} · {item.usedPacks}/{item.totalPacks} packs used
+        <div key={item.id} className="py-3 first:pt-0 last:pb-0">
+          <p className={`font-medium ${urgent ? "text-status-danger" : "text-slate-900"}`}>
+            {item.title}
+          </p>
+          <p className={`mt-0.5 text-sm ${urgent ? "text-status-danger" : "text-slate-600"}`}>
+            {item.person}
+          </p>
+          <p className="mt-0.5 text-xs tabular-nums text-slate-500">
+            {item.daysRemaining}
+            <span aria-label={`${item.usedPacks} of ${item.totalPacks} packs used`}>
+              {" · "}{item.usedPacks}/{item.totalPacks} packs
+            </span>
           </p>
           <UsePacksInline item={item} />
         </div>

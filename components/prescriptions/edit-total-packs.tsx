@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { updateTotalPacksAction } from "@/app/actions";
 
 export function EditTotalPacks({
@@ -12,13 +14,17 @@ export function EditTotalPacks({
   totalPacks: number;
   usedPacks: number;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState(String(totalPacks));
-  const [saved, setSaved] = useState(totalPacks);
-  const [, startTransition] = useTransition();
+  const inputId         = useId();
+  const [editing, setEditing]       = useState(false);
+  const [value, setValue]           = useState(String(totalPacks));
+  const [saved, setSaved]           = useState(totalPacks);
+  const [, startTransition]         = useTransition();
 
   const parsed = parseInt(value, 10);
-  const valid = !isNaN(parsed) && parsed >= usedPacks && parsed >= 1;
+  const valid  = !isNaN(parsed) && parsed >= usedPacks && parsed >= 1;
+  const error  = value !== "" && !valid
+    ? `Minimum ${Math.max(1, usedPacks)} (current usage)`
+    : undefined;
 
   function handleSave() {
     if (!valid) return;
@@ -33,48 +39,43 @@ export function EditTotalPacks({
     return (
       <div className="flex items-center gap-2 text-sm text-slate-700">
         <span>
-          Total Packs: <strong>{saved}</strong> ({usedPacks} used, {saved - usedPacks} remaining)
+          Total Packs: <strong className="tabular-nums">{saved}</strong>
+          <span className="ml-1 text-slate-500">
+            ({usedPacks} used, {saved - usedPacks} remaining)
+          </span>
         </span>
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => { setValue(String(saved)); setEditing(true); }}
-          className="rounded border border-slate-300 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-50"
         >
           Edit
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <span className="text-slate-600">Total Packs:</span>
-      <input
+    <div className="flex flex-wrap items-start gap-2">
+      <Input
+        id={inputId}
+        label="Total Packs"
         type="number"
         min={Math.max(1, usedPacks)}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+        error={error}
+        className="w-28"
         autoFocus
       />
-      <button
-        type="button"
-        disabled={!valid}
-        onClick={handleSave}
-        className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
-      >
-        Save
-      </button>
-      <button
-        type="button"
-        onClick={() => setEditing(false)}
-        className="rounded-lg border border-slate-300 px-3 py-1 text-xs text-slate-600"
-      >
-        Cancel
-      </button>
-      {!valid && value !== "" && (
-        <span className="text-xs text-rose-600">Min: {Math.max(1, usedPacks)}</span>
-      )}
+      <div className="flex items-end gap-2 pb-px" style={{ marginTop: "1.625rem" }}>
+        <Button variant="primary" size="sm" disabled={!valid} onClick={handleSave}>
+          Save
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setEditing(false)}>
+          Cancel
+        </Button>
+      </div>
     </div>
   );
 }

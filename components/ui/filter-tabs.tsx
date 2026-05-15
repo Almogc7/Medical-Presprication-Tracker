@@ -13,20 +13,31 @@ export function FilterTabs({
 }) {
   return (
     <div className="overflow-x-auto pb-1">
-      <div className="inline-flex min-w-max rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-        {items.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            onClick={() => onChange(item.value)}
-            className={cn(
-              "rounded-lg whitespace-nowrap px-3 py-1.5 text-sm transition",
-              value === item.value ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100",
-            )}
-          >
-            {item.label}
-          </button>
-        ))}
+      <div
+        role="tablist"
+        aria-label="Filter prescriptions"
+        className="inline-flex min-w-max rounded-xl border border-border bg-surface p-1 shadow-sm"
+      >
+        {items.map((item) => {
+          const active = value === item.value;
+          return (
+            <button
+              key={item.value}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => onChange(item.value)}
+              className={cn(
+                "whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                active
+                  ? "bg-accent text-accent-fg"
+                  : "text-slate-600 hover:bg-border-subtle",
+              )}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

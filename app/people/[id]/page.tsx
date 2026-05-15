@@ -49,7 +49,7 @@ export default async function PersonDetailPage({ params }: { params: Promise<{ i
         title={person.fullName}
         subtitle={t.person.prescriptions}
         actions={
-          <Link href="/upload" className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white">
+          <Link href="/upload" className="inline-flex h-10 items-center rounded-[var(--radius-component)] bg-accent px-4 text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover">
             {t.common.uploadPrescription}
           </Link>
         }

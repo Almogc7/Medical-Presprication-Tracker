@@ -25,7 +25,13 @@ export function PersonCard({
         <div className="flex items-start justify-between gap-2">
           <h3 className="text-lg font-semibold text-slate-900">{name}</h3>
           {warning ? (
-            <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">!</span>
+            <span
+              className="rounded-full bg-status-warning-bg px-2 py-1 text-xs font-semibold text-status-warning"
+              aria-label="Prescription expiring soon"
+              role="img"
+            >
+              !
+            </span>
           ) : null}
         </div>
         <div className="mt-4 space-y-1 text-sm text-slate-600">

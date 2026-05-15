@@ -1,17 +1,25 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import { setAllPacksForPersonAction } from "@/app/actions";
 
-export function SetPacksForPerson({ personId, prescriptionCount }: { personId: string; prescriptionCount: number }) {
-  const [value, setValue] = useState("");
-  const [done, setDone] = useState(false);
-  const [, startTransition] = useTransition();
+export function SetPacksForPerson({
+  personId,
+  prescriptionCount,
+}: {
+  personId: string;
+  prescriptionCount: number;
+}) {
+  const inputId = useId();
+  const [value, setValue]       = useState("");
+  const [done, setDone]         = useState(false);
+  const [, startTransition]     = useTransition();
 
   if (prescriptionCount === 0) return null;
 
   const parsed = parseInt(value, 10);
-  const valid = !isNaN(parsed) && parsed >= 1;
+  const valid  = !isNaN(parsed) && parsed >= 1;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,29 +33,37 @@ export function SetPacksForPerson({ personId, prescriptionCount }: { personId: s
 
   if (done) {
     return (
-      <p className="mt-2 text-center text-xs text-emerald-600">
+      <p
+        role="status"
+        aria-live="polite"
+        className="mt-2 text-center text-xs text-status-healthy"
+      >
         ✓ All {prescriptionCount} prescription{prescriptionCount > 1 ? "s" : ""} updated
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-2 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+    <form
+      onSubmit={handleSubmit}
+      className="mt-2 flex items-center gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <label htmlFor={inputId} className="sr-only">
+        Total packs for all prescriptions
+      </label>
       <input
+        id={inputId}
         type="number"
         min={1}
         placeholder="Packs"
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-xs"
+        className="w-20 rounded-[var(--radius-component)] border border-border bg-surface px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
       />
-      <button
-        type="submit"
-        disabled={!valid}
-        className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-semibold text-white disabled:opacity-50"
-      >
+      <Button type="submit" variant="primary" size="sm" disabled={!valid}>
         Set all
-      </button>
+      </Button>
     </form>
   );
 }
