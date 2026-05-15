@@ -100,6 +100,13 @@ export async function undoPrescriptionIssued(prescriptionId: string) {
   return updated;
 }
 
+export async function updatePrescriptionTotalPacks(prescriptionId: string, totalPacks: number) {
+  await prisma.prescription.update({
+    where: { id: prescriptionId },
+    data: { totalPacks },
+  });
+}
+
 export async function deletePrescription(prescriptionId: string) {
   await prisma.auditLog.create({
     data: {

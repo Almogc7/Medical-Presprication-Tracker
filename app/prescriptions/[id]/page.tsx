@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { EditTotalPacks } from "@/components/prescriptions/edit-total-packs";
 import { ProtectedPage } from "@/components/layout/protected-page";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
@@ -48,6 +49,11 @@ export default async function PrescriptionDetailPage({ params }: { params: Promi
         <p className="text-sm text-slate-700">{t.common.startsOn}: {formatDateInIsrael(prescription.startDate)}</p>
         <p className="text-sm text-slate-700">{t.common.expiresOn}: {formatDateInIsrael(prescription.expirationDate)}</p>
         <p className="text-sm text-slate-700">{t.common.daysRemaining}: {getReadableDaysRemaining(prescription.expirationDate)}</p>
+        <EditTotalPacks
+          prescriptionId={prescription.id}
+          totalPacks={prescription.totalPacks}
+          usedPacks={prescription.usedPacks}
+        />
         <p className="text-sm text-slate-700">{t.common.notes}: {prescription.notes || "-"}</p>
         <div className="pt-2">
           <Link
